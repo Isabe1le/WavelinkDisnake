@@ -101,7 +101,7 @@ class Websocket:
             logger.debug(f'Node {self.node} encountered an error while cancelling the websocket listener: {e}. '
                          f'This is likely not an issue and will not affect connection.')
 
-        uri: str = self.node._host.removeprefix('https://').removeprefix('http://')
+        uri: str = self.node._host.replace('https://', '').replace('http://', '')
 
         if self.node._use_http:
             uri: str = f'{"https://" if self.node._secure else "http://"}{uri}'
