@@ -344,7 +344,10 @@ class SpotifyTrack:
         cls
             The class to convert this Spotify Track to.
         """
-        try:
+
+        if not self.isrc:
+            tracks: list[cls] = await cls.search(f'{self.name} - {self.artists[0]}')
+        else:
             tracks: list[cls] = await cls.search(f'"{self.isrc}"')
             if not tracks:
                 tracks: list[cls] = await cls.search(f'{self.name} - {self.artists[0]}')
