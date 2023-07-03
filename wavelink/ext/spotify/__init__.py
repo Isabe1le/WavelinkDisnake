@@ -216,6 +216,7 @@ class SpotifyTrack:
             query: str,
             *,
             node: Optional[Node] = None,
+            return_first: bool = False,
     ) -> list['SpotifyTrack']:
         """|coro|
 

@@ -25,7 +25,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import abc
-from typing import TYPE_CHECKING, ClassVar, Literal, overload, Optional, Any
+from typing import TYPE_CHECKING, ClassVar, Literal, Union, overload, Optional, Any
 
 import aiohttp
 import yarl
@@ -159,7 +159,8 @@ class Playable(metaclass=abc.ABCMeta):
                      query: str,
                      /,
                      *,
-                     node: Optional[Node] = ...
+                     node: Optional[Node] = ...,
+                     return_first: bool = False,
                      ) -> list[Self]:
         ...
 
@@ -169,7 +170,8 @@ class Playable(metaclass=abc.ABCMeta):
                      query: str,
                      /,
                      *,
-                     node: Optional[Node] = ...
+                     node: Optional[Node] = ...,
+                     return_first: bool = False,
                      ) -> YouTubePlaylist:
         ...
 
@@ -179,7 +181,8 @@ class Playable(metaclass=abc.ABCMeta):
                      query: str,
                      /,
                      *,
-                     node: Optional[Node] = ...
+                     node: Optional[Node] = ...,
+                     return_first: bool = False,
                      ) -> SoundCloudPlaylist:
         ...
 
@@ -188,8 +191,9 @@ class Playable(metaclass=abc.ABCMeta):
                      query: str,
                      /,
                      *,
-                     node: Optional[Node] = None
-                     ) -> list[Self]:
+                     node: Optional[Node] = None,
+                     return_first: bool = False,
+                     ) -> Union[list[Self], Self]:
         """Search and retrieve tracks for the given query.
 
         Parameters
@@ -217,6 +221,8 @@ class Playable(metaclass=abc.ABCMeta):
         else:
             tracks = await NodePool.get_tracks(f'{cls.PREFIX}{query}', cls=cls, node=node)
 
+        if return_first and len(tracks) > 0:
+            return tracks[0]
         return tracks
 
     @classmethod
