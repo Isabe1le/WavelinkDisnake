@@ -136,7 +136,7 @@ class BaseQueue:
         """
         return bool(self.count)
 
-    def __call__(self, Union[Playable, spotify.SpotifyTrack]) -> None:
+    def __call__(self, item: Union[Playable, spotify.SpotifyTrack]) -> None:
         """Allows the queue instance to be called directly in order to add a member.
 
         Example
@@ -177,7 +177,7 @@ class BaseQueue:
 
         return self._queue[index]
 
-    def __setitem__(self, index: int, Union[Playable, spotify.SpotifyTrack]):
+    def __setitem__(self, index: int, item: Union[Playable, spotify.SpotifyTrack]):
         """Inserts an item at the given position.
 
         Example
@@ -232,7 +232,7 @@ class BaseQueue:
         """
         return self._queue.__reversed__()
 
-    def __contains__(self, Union[Playable, spotify.SpotifyTrack]) -> bool:
+    def __contains__(self, item: Union[Playable, spotify.SpotifyTrack]) -> bool:
         """Check if a track is a member of the queue.
 
         Example
@@ -292,17 +292,17 @@ class BaseQueue:
     def _drop(self) -> Union[Playable, spotify.SpotifyTrack]:
         return self._queue.pop()
 
-    def _index(self, Union[Playable, spotify.SpotifyTrack]) -> int:
+    def _index(self, item: Union[Playable, spotify.SpotifyTrack]) -> int:
         return self._queue.index(item)
 
-    def _put(self, Union[Playable, spotify.SpotifyTrack]) -> None:
+    def _put(self, item: Union[Playable, spotify.SpotifyTrack]) -> None:
         self._queue.append(item)
 
-    def _insert(self, index: int, Union[Playable, spotify.SpotifyTrack]) -> None:
+    def _insert(self, index: int, item: Union[Playable, spotify.SpotifyTrack]) -> None:
         self._queue.insert(index, item)
 
     @staticmethod
-    def _check_playable(Union[Playable, spotify.SpotifyTrack]) -> Union[Playable, spotify.SpotifyTrack]:
+    def _check_playable(item: Union[Playable, spotify.SpotifyTrack]) -> Union[Playable, spotify.SpotifyTrack]:
         if not isinstance(item, (Playable, spotify.SpotifyTrack)):
             raise TypeError("Only Playable objects are supported.")
 
@@ -347,14 +347,14 @@ class BaseQueue:
 
         return self._queue.pop()
 
-    def find_position(self, Union[Playable, spotify.SpotifyTrack]) -> int:
+    def find_position(self, item: Union[Playable, spotify.SpotifyTrack]) -> int:
         """Find the position a given item within the queue.
 
         Raises :exc:`ValueError` if item is not in the queue.
         """
         return self._index(self._check_playable(item))
 
-    def put(self, Union[Playable, spotify.SpotifyTrack]) -> None:
+    def put(self, item: Union[Playable, spotify.SpotifyTrack]) -> None:
         """Put the given item into the back of the queue.
 
         If the provided ``item`` is a :class:`~wavelink.YouTubePlaylist` or :class:`~wavelink.SoundCloudPlaylist`, all
@@ -380,11 +380,11 @@ class BaseQueue:
         else:
             self._put(item)
 
-    def put_at_index(self, index: int, Union[Playable, spotify.SpotifyTrack]) -> None:
+    def put_at_index(self, index: int, item: Union[Playable, spotify.SpotifyTrack]) -> None:
         """Put the given item into the queue at the specified index."""
         self._insert(index, self._check_playable(item))
 
-    def put_at_front(self, Union[Playable, spotify.SpotifyTrack]) -> None:
+    def put_at_front(self, item: Union[Playable, spotify.SpotifyTrack]) -> None:
         """Put the given item into the front of the queue."""
         self.put_at_index(0, item)
 
@@ -511,7 +511,7 @@ class Queue(BaseQueue):
         self._loaded = item
         return item
 
-    async def _put(self, Union[Playable, spotify.SpotifyTrack]) -> None:
+    async def _put(self, item: Union[Playable, spotify.SpotifyTrack]) -> None:
         self._check_playable(item)
 
         if isinstance(item, (YouTubePlaylist, SoundCloudPlaylist)):
@@ -524,7 +524,7 @@ class Queue(BaseQueue):
 
         self._wakeup_next()
 
-    def _insert(self, index: int, Union[Playable, spotify.SpotifyTrack]) -> None:
+    def _insert(self, index: int, item: Union[Playable, spotify.SpotifyTrack]) -> None:
         super()._insert(index, item)
         self._wakeup_next()
 
@@ -568,7 +568,7 @@ class Queue(BaseQueue):
 
         return self.get()
 
-    async def put_wait(self, Union[Playable, spotify.SpotifyTrack]) -> None:
+    async def put_wait(self, item: Union[Playable, spotify.SpotifyTrack]) -> None:
         """|coro|
 
         Put an item into the queue asynchronously using ``await``.
